@@ -1,0 +1,1 @@
+add_executable(target-simulator src/main.cpp)
