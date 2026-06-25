@@ -1,0 +1,9 @@
+build/
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+# VS Code
+.vscode/
+
