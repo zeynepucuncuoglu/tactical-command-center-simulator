@@ -53,3 +53,41 @@ TEST(TargetManagerTest, FindTargetByIdReturnsNulloptWhenNotFound)
 
     EXPECT_FALSE(found.has_value());
 }
+
+TEST(TargetManagerTest, GetAllTargets)
+{
+    TargetManager manager;
+
+    Target target1("T-001", 10.0, 20.0, 300.0, TargetType::AIRCRAFT);
+    Target target2("T-002", 30.0, 40.0, 400.0, TargetType::SHIP);
+
+    manager.addTarget(target1);
+    manager.addTarget(target2);
+
+    auto allTargets = manager.getAllTargets();
+
+    EXPECT_EQ(allTargets.size(), 2);
+}
+
+TEST(TargetManagerTest, RemoveTargetById)
+{
+    TargetManager manager;
+
+    Target target("T-001", 10.0, 20.0, 300.0, TargetType::AIRCRAFT);
+    manager.addTarget(target);
+
+    bool removed = manager.removeTargetById("T-001");
+    EXPECT_TRUE(removed);
+
+    auto found = manager.findTargetById("T-001");
+    EXPECT_FALSE(found.has_value());
+}   
+
+TEST(TargetManagerTest, RemoveTargetByIdReturnsFalseWhenNotFound)
+{
+    TargetManager manager;
+
+    bool removed = manager.removeTargetById("UNKNOWN");
+    EXPECT_FALSE(removed);
+}
+
