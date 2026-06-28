@@ -1,4 +1,5 @@
 #include "Target.h"
+#include <stdexcept>
 
 Target::Target(
     const std::string& id,
@@ -11,9 +12,12 @@ Target::Target(
       m_y(y),
       m_speed(speed),
       m_type(type)
+{
+    if (id.empty())
     {
+        throw std::invalid_argument("Target id cannot be empty");
     }
-
+}
 std::string Target::getId() const
 {
     return m_id;
