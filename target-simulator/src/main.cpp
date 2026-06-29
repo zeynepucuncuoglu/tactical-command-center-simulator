@@ -5,8 +5,17 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
+#include <thread>
+#include <chrono>
 #include "Target.h"
+#include <csignal>
+
+volatile sig_atomic_t running = 1;
+
+void signalHandler(int signal)
+{
+    running = 0;
+}
 
 std::string targetTypeToString(TargetType type) {
     switch (type) {
@@ -22,6 +31,9 @@ std::string targetTypeToString(TargetType type) {
 }
 
 int main() {
+
+    signal(SIGINT, signalHandler);
+
     Target target(
         "1",
         120.5,
@@ -47,30 +59,27 @@ int main() {
         return 1;
     }
 
-    std::string message =
-        target.getId() + "," +
-        std::to_string(target.getX()) + "," +
-        std::to_string(target.getY()) + "," +
-        std::to_string(target.getSpeed()) + "," +
-        targetTypeToString(target.getType());
+    while(running){
 
-    ssize_t sentBytes = sendto(
-        sockfd,
-        message.c_str(),
-        message.size(),
-        0,
-        reinterpret_cast<sockaddr*>(&receiverAddr),
-        sizeof(receiverAddr)
-    );
+        std::string message =
+            target.getId() + "," +
+            std::to_string(target.getX()) + "," +
+            std::to_string(target.getY()) + "," +
+            std::to_string(target.getSpeed()) + "," +
+            targetTypeToString(target.getType());
 
-    if (sentBytes < 0) {
-        std::cerr << "Failed to send UDP message\n";
-        close(sockfd);
-        return 1;
+        sendto(
+            sockfd,
+            message.c_str(),
+            message.size(),
+            0,
+            reinterpret_cast<sockaddr*>(&receiverAddr),
+            sizeof(receiverAddr)
+        );
+
+        std::cout << "Sent message: " << message << "\n";
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-
-    std::cout << "Sent message: " << message << "\n";
-
     close(sockfd);
     return 0;
 }
