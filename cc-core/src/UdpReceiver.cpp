@@ -8,9 +8,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <QString>
 
-UdpReceiver::UdpReceiver(int port, TargetManager& targetManager)
-    : m_port(port),
+UdpReceiver::UdpReceiver(int port, TargetManager& targetManager, QObject* parent)
+    : QObject(parent),
+      m_port(port),
       m_sockfd(-1),
       m_targetManager(targetManager),
       m_running(false)
@@ -155,3 +157,15 @@ Target UdpReceiver::parseTargetMessage(const std::string& message)
 
     return Target(id, x, y, speed, type);
 }
+
+emit targetReceived(
+    QString::fromStdString(target.getId()),
+    target.getX(),
+    target.getY(),
+    target.getSpeed(),
+    QString::fromStdString(
+        target.getType() == TargetType::AIRCRAFT ? "AIRCRAFT" :
+        target.getType() == TargetType::DRONE ? "DRONE" :
+        target.getType() == TargetType::SHIP ? "SHIP" : "UNKNOWN"
+    )
+);   

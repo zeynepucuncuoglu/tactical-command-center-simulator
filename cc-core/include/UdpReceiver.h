@@ -3,7 +3,11 @@
 #include <thread>
 #include "TargetManager.h"
 
-class UdpReceiver{
+class UdpReceiver: public QObject
+{
+    
+        Q_OBJECT
+
     public:
         UdpReceiver(int port, TargetManager& targetManager);
         ~UdpReceiver();
@@ -20,5 +24,8 @@ class UdpReceiver{
         
         std::atomic<bool> m_running;
         std::thread m_thread;
+    signals:
+        void targetReceived(const QString& id, double x, double y, 
+                            double speed, const QString& type);
 
 };

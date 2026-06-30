@@ -11,6 +11,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = nullptr);
 
+    public slots:
+    void onTargetReceived(const QString& id, double x, double y, 
+                          double speed, const QString& type);
+
+
 private:
     QTableWidget* m_tableWidget;
+
 };
