@@ -2,6 +2,8 @@
 #include <atomic>
 #include <thread>
 #include "TargetManager.h"
+#include <QObject>
+#include <QString>
 
 class UdpReceiver: public QObject
 {
@@ -9,7 +11,7 @@ class UdpReceiver: public QObject
         Q_OBJECT
 
     public:
-        UdpReceiver(int port, TargetManager& targetManager);
+        UdpReceiver(int port, TargetManager& targetManager, QObject* parent = nullptr);
         ~UdpReceiver();
         void start();
         void stop(); 

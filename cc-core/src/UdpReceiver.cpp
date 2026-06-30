@@ -112,7 +112,17 @@ void UdpReceiver::receiveLoop()
             Target target = parseTargetMessage(message);
 
             m_targetManager.addTarget(target);
-
+            emit targetReceived(
+                QString::fromStdString(target.getId()),
+                target.getX(),
+                target.getY(),
+                target.getSpeed(),
+                QString::fromStdString(
+                    target.getType() == TargetType::AIRCRAFT ? "AIRCRAFT" :
+                    target.getType() == TargetType::DRONE ? "DRONE" :
+                    target.getType() == TargetType::SHIP ? "SHIP" : "UNKNOWN"
+                )
+            );
             std::cout << "Received target: " << message << "\n";
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse target message: "
@@ -158,14 +168,5 @@ Target UdpReceiver::parseTargetMessage(const std::string& message)
     return Target(id, x, y, speed, type);
 }
 
-emit targetReceived(
-    QString::fromStdString(target.getId()),
-    target.getX(),
-    target.getY(),
-    target.getSpeed(),
-    QString::fromStdString(
-        target.getType() == TargetType::AIRCRAFT ? "AIRCRAFT" :
-        target.getType() == TargetType::DRONE ? "DRONE" :
-        target.getType() == TargetType::SHIP ? "SHIP" : "UNKNOWN"
-    )
-);   
+
+   
