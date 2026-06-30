@@ -1,25 +1,20 @@
 #include "TargetManager.h"
 #include "UdpReceiver.h"
-
+#include <QApplication>
+#include <QMainWindow>
 #include <chrono>
 #include <iostream>
 #include <thread>
 
-int main()
+
+int main(int argc, char* argv[])
 {
-    TargetManager targetManager;
+    QApplication app(argc, argv);
 
-    UdpReceiver receiver(9000, targetManager);
+    QMainWindow window;
+    window.setWindowTitle("Qt Operator");
+    window.resize(800, 600);
+    window.show();
 
-    receiver.start();
-
-    std::cout << "Receiver is running for 10 seconds...\n";
-
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-
-    receiver.stop();
-
-    std::cout << "Program finished\n";
-
-    return 0;
+    return app.exec();
 }
