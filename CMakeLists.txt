@@ -17,4 +17,5 @@ add_subdirectory(target-simulator)
 add_subdirectory(cc-core)
 add_subdirectory(qt-operator)
 add_subdirectory(tests)
+add_subdirectory(command-receiver)
 
