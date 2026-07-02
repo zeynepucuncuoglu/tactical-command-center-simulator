@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Target.h"
 #include <QMainWindow>
 
 class QTableWidget;
@@ -12,8 +12,7 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
 
     public slots:
-    void onTargetReceived(const QString& id, double x, double y, 
-                          double speed, const QString& type);
+    void onTargetReceived(const Target& target);
 
 
 private:

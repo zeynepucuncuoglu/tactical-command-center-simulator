@@ -2,16 +2,12 @@
 #include <atomic>
 #include <thread>
 #include "TargetManager.h"
-#include <QObject>
-#include <QString>
+#include <functional>
 
-class UdpReceiver: public QObject
+class UdpReceiver
 {
-    
-        Q_OBJECT
-
     public:
-        UdpReceiver(int port, TargetManager& targetManager, QObject* parent = nullptr);
+        UdpReceiver(int port, TargetManager& targetManager, std::function<void(const Target&)> onTargetReceived);
         ~UdpReceiver();
         void start();
         void stop(); 
@@ -23,11 +19,8 @@ class UdpReceiver: public QObject
         int m_port;
         int m_sockfd;
         TargetManager& m_targetManager;
-        
+        std::function<void(const Target&)> m_onTargetReceived;
         std::atomic<bool> m_running;
         std::thread m_thread;
-    signals:
-        void targetReceived(const QString& id, double x, double y, 
-                            double speed, const QString& type);
-
+   
 };

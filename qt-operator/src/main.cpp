@@ -19,10 +19,18 @@ int main(int argc, char* argv[])
     window.show();
     
     TargetManager targetManager;
-    UdpReceiver* receiver = new UdpReceiver(9000, targetManager, &window);
-    QObject::connect(receiver, &UdpReceiver::targetReceived,
-                 &window,  &MainWindow::onTargetReceived);
-
+    UdpReceiver* receiver = new UdpReceiver(9000, targetManager, [&](const Target& target)
+    {
+        QMetaObject::invokeMethod(
+            &window,
+            [&window, target]()
+            {
+                window.onTargetReceived(target);
+            },
+            Qt::QueuedConnection
+        );
+    });
+    
     receiver->start();
     return app.exec();
 }

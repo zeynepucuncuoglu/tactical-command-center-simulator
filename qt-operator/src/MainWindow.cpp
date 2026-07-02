@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-
+#include "Target.h"
 #include <QTableWidget>
 #include <QStringList>
 
@@ -30,12 +30,22 @@ MainWindow::MainWindow(QWidget* parent)
   
 }
 
+std::string targetTypeToString(TargetType type) {
+    switch (type) {
+        case TargetType::AIRCRAFT:
+            return "AIRCRAFT";
+        case TargetType::DRONE:
+            return "DRONE";
+        case TargetType::SHIP:
+            return "SHIP";
+        default:
+            return "UNKNOWN";
+    }
+}
+
+
   void MainWindow::onTargetReceived(
-    const QString& id,
-    double x,
-    double y,
-    double speed,
-    const QString& type)
+    const Target& target)
 {
     int row = m_tableWidget->rowCount();
 
@@ -44,25 +54,25 @@ MainWindow::MainWindow(QWidget* parent)
     m_tableWidget->setItem(
         row,
         0,
-        new QTableWidgetItem(id));
+        new QTableWidgetItem(QString::fromStdString(target.getId())));
 
     m_tableWidget->setItem(
         row,
         1,
-        new QTableWidgetItem(QString::number(x)));
+        new QTableWidgetItem(QString::number(target.getX())));
 
     m_tableWidget->setItem(
         row,
         2,
-        new QTableWidgetItem(QString::number(y)));
+        new QTableWidgetItem(QString::number(target.getY())));
 
     m_tableWidget->setItem(
         row,
         3,
-        new QTableWidgetItem(QString::number(speed)));
+        new QTableWidgetItem(QString::number(target.getSpeed())));
 
     m_tableWidget->setItem(
         row,
         4,
-        new QTableWidgetItem(type));
+        new QTableWidgetItem(QString::fromStdString(targetTypeToString(target.getType()))));
 }

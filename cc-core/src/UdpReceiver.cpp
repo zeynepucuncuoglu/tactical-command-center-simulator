@@ -8,13 +8,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <QString>
 
-UdpReceiver::UdpReceiver(int port, TargetManager& targetManager, QObject* parent)
-    : QObject(parent),
+UdpReceiver::UdpReceiver(int port, TargetManager& targetManager, std::function<void(const Target&)> onTargetReceived)
+    :
       m_port(port),
       m_sockfd(-1),
       m_targetManager(targetManager),
+      m_onTargetReceived(onTargetReceived),
       m_running(false)
 {
 }
@@ -112,17 +112,10 @@ void UdpReceiver::receiveLoop()
             Target target = parseTargetMessage(message);
 
             m_targetManager.addTarget(target);
-            emit targetReceived(
-                QString::fromStdString(target.getId()),
-                target.getX(),
-                target.getY(),
-                target.getSpeed(),
-                QString::fromStdString(
-                    target.getType() == TargetType::AIRCRAFT ? "AIRCRAFT" :
-                    target.getType() == TargetType::DRONE ? "DRONE" :
-                    target.getType() == TargetType::SHIP ? "SHIP" : "UNKNOWN"
-                )
-            );
+            if (m_onTargetReceived)
+            {
+                m_onTargetReceived(target);
+            }
             std::cout << "Received target: " << message << "\n";
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse target message: "
